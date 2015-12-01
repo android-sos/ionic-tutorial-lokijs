@@ -1,28 +1,36 @@
 (function() {
 
     angular.module('starter').factory('BirthdayService', ['$q', 'Loki', BirthdayService]);
-        
+
     function BirthdayService($q, Loki) {
         var _db;
         var _birthdays;
 
-        function initDB() {            
-            var fsAdapter = new LokiCordovaFSAdapter({"prefix": "loki"});  
-            _db = new Loki('birthdaysDB',
-                    {
-                        autosave: true,
-                        autosaveInterval: 1000, // 1 second
-                        adapter: fsAdapter
-                    });
-        };
+        function initDB() {
 
-        function getAllBirthdays() {        
-            return $q(function (resolve, reject) {
-    
+
+            var options = {
+                autosave: true,
+                autosaveInterval: 1000
+            };
+
+
+            if (ionic.Platform.isAndroid() || ionic.Platform.isIOS()) {
+                var fsAdapter = new LokiCordovaFSAdapter({
+                    "prefix": "loki"
+                });
+                options.adapter = fsAdapter;
+            }
+            _db = new Loki('birthdaysDB', options);
+        }
+
+        function getAllBirthdays() {
+            return $q(function(resolve, reject) {
+
                 var options = {
                     birthdays: {
                         proto: Object,
-                        inflate: function (src, dst) {
+                        inflate: function(src, dst) {
                             var prop;
                             for (prop in src) {
                                 if (prop === 'Date') {
@@ -34,14 +42,14 @@
                         }
                     }
                 };
-    
-                _db.loadDatabase(options, function () {
+
+                _db.loadDatabase(options, function() {
                     _birthdays = _db.getCollection('birthdays');
-    
+
                     if (!_birthdays) {
                         _birthdays = _db.addCollection('birthdays');
                     }
-    
+
                     resolve(_birthdays.data);
                 });
             });
@@ -51,7 +59,7 @@
             _birthdays.insert(birthday);
         };
 
-        function updateBirthday(birthday) {            
+        function updateBirthday(birthday) {
             _birthdays.update(birthday);
         };
 
