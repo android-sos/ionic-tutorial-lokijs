@@ -1,10 +1,14 @@
 (function() {
 
-    angular.module('starter').factory('BirthdayService', ['$q', 'Loki', BirthdayService]);
+    angular.module('starter')
+        .factory('BirthdayService', ['$q', 'Loki', '$firebaseArray', BirthdayService]);
 
-    function BirthdayService($q, Loki) {
+    function BirthdayService($q, Loki, $firebaseArray) {
         var _db;
         var _birthdays;
+        var _ref = new Firebase("https://scm-loki.firebaseio.com/");
+        var _bdRef = _ref.child('birthdays');
+        var _bd = $firebaseArray(_bdRef);
 
         function initDB() {
 
@@ -57,7 +61,18 @@
 
         function addBirthday(birthday) {
             _birthdays.insert(birthday);
+            _bd.$add(birthday)
+                .then(oK)
+                .catch(eR);
         };
+
+        function oK(res) {
+            console.log('ok', res);
+        }
+
+        function eR(error) {
+            console.error(error);
+        }
 
         function updateBirthday(birthday) {
             _birthdays.update(birthday);
@@ -67,12 +82,17 @@
             _birthdays.remove(birthday);
         };
 
+        function getBdArray() {
+            return _bd;
+        }
+
         return {
             initDB: initDB,
             getAllBirthdays: getAllBirthdays,
             addBirthday: addBirthday,
             updateBirthday: updateBirthday,
-            deleteBirthday: deleteBirthday
+            deleteBirthday: deleteBirthday,
+            getBdArray: getBdArray
         };
     }
 })();
