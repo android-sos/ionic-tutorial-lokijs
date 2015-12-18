@@ -6,3 +6,16 @@ Read the tutorial here: [How To Use LokiJS For Local Storage In Your Ionic App](
 
 For more tutorials on Ionic, check out the blog [Gone Hybrid](http://gonehybrid.com).
 
+
+changes api
+
+birthdays.getChanges()
+[Object]
+birthdays.flushChanges()
+undefined
+birthdays.getChanges()
+
+
+a=birthdays.getChanges()
+[Object, Object]
+a.forEach(function(o,i){console.log(o)})
