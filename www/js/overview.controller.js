@@ -1,10 +1,12 @@
 (function() {
-    angular.module('starter').controller('OverviewController', ['$scope', '$ionicModal', '$ionicPlatform', 'BirthdayService', OverviewController]);
+    angular.module('starter')
+        .controller('OverviewController', ['$scope', '$ionicModal', '$ionicPlatform', 'BirthdayService', OverviewController]);
 
     function OverviewController($scope, $ionicModal, $ionicPlatform, birthdayService) {
         var vm = this;
         vm.online = true;
         vm.fb = birthdayService.getBdArray();
+        vm.isSync = isSync;
         // $ionicPlatform.ready(function() {
 
         //     // Initialize the database.
@@ -16,6 +18,16 @@
         //             vm.birthdays = birthdays;
         //         });
         // });
+
+        function isSync(key) {
+           if( birthdayService.getTempById(key)){
+            return true;
+           }
+           else{
+            return false;
+           }
+            
+        }
 
 
         function activate() {

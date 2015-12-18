@@ -122,9 +122,12 @@ var db, birthdays, fbA, tm, temp;
             _birthdays = _db.getCollection('birthdays');
             if (!_birthdays) {
                 _birthdays = _db.addCollection('birthdays', {
+                    indices: ['fbKey'],
                     clone: true
                 });
+                _birthdays.ensureUniqueIndex('fbKey');
             }
+
             var isEnabled = true;
             _birthdays.setChangesApi(isEnabled);
             birthdays = _birthdays;
@@ -135,7 +138,8 @@ var db, birthdays, fbA, tm, temp;
 
             if (!_temp) {
                 _temp = _db.addCollection('temp', {
-                    indices: ['fbKey']
+                    indices: ['fbKey'],
+                    clone: true
                 });
                 _temp.ensureUniqueIndex('fbKey');
 
@@ -216,7 +220,7 @@ var db, birthdays, fbA, tm, temp;
 
         function addBirthday(birthday) {
 
-            _birthdays.insert(birthday);
+
             var before = _bd.length - 1;
             var o = _bd.$add(birthday)
                 .then(oK)
@@ -253,6 +257,7 @@ var db, birthdays, fbA, tm, temp;
                 fbVal: birthday
             };
             console.log(lastIndex, _bd[lastIndex], key, newObj);
+            _birthdays.insert(newObj);
             _temp.insert(newObj);
         }
 
@@ -285,6 +290,16 @@ var db, birthdays, fbA, tm, temp;
 
         }
 
+        function getTempById(key) {
+
+            // $timeout(function() {
+                var obj = temp.by('fbKey', key);
+                console.log('obj', obj);
+                return obj;
+            // }, 200);
+
+        }
+
         return {
             initDB: initDB,
             getAllBirthdays: getAllBirthdays,
@@ -293,7 +308,9 @@ var db, birthdays, fbA, tm, temp;
             deleteBirthday: deleteBirthday,
             getBdArray: getBdArray,
             getBirthdays: getBirthdays,
-            getTemp: getTemp
+            getTemp: getTemp,
+            getTempById: getTempById
+
         };
     }
 })();
