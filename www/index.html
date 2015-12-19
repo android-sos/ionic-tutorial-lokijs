@@ -47,7 +47,7 @@
                 <div class="item item-divider">
                     temp
                 </div>
-                <ion-item ng-class="{ns:vm.isSync(b.fbKey)}" ng-repeat="b in vm.temp" ng-click="vm.showEditBirthdayModal(b)">
+                <ion-item ng-class="{ns:vm.isSync(b.fbKey)}" ng-repeat="b in vm.temp track by b.fbKey" ng-click="vm.showEditBirthdayModal(b)">
                     <div style="float: left">{{ b.fbVal.Name }}</div>
                     <div style="float: right">{{ b.fbKey }}</div>
                 </ion-item>

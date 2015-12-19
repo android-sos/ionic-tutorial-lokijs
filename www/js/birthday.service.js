@@ -136,6 +136,8 @@ var db, birthdays, fbA, tm, temp;
         function validateTempCollection() {
             _temp = _db.getCollection('temp');
 
+
+
             if (!_temp) {
                 _temp = _db.addCollection('temp', {
                     indices: ['fbKey'],
@@ -148,6 +150,33 @@ var db, birthdays, fbA, tm, temp;
             }
 
             temp = _temp;
+            trySync();
+        }
+
+        function trySync() {
+            _temp.data.forEach(function(obj, i) {
+                console.log(obj, i);
+                _bdRef.child(obj.fbKey).set(obj.fbVal, syncCb(obj.fbKey));
+            });
+        }
+
+        function syncCb(fbKey) {
+
+            function cbFb(error) {
+                if (error) {
+                    console.error('error');
+                } else {
+                    console.log('inserted  to sync', fbKey);
+
+                    $timeout(function  () {
+                        removeTempbyId(fbKey);
+                    }, 100);
+                    // removeTempbyId(fbKey);
+                }
+            }
+
+            return cbFb;
+            // body...
         }
 
         function getBirthdays() {
@@ -264,9 +293,7 @@ var db, birthdays, fbA, tm, temp;
         function oK(ref) {
             var fbKey = ref.key();
             console.log('ok', fbKey, ref);
-            _temp.removeWhere({
-                'fbKey': fbKey
-            });
+            removeTempbyId(fbKey);
         }
 
         function eR(error) {
@@ -285,6 +312,13 @@ var db, birthdays, fbA, tm, temp;
             return _bd;
         }
 
+        function removeTempbyId(fbKey) {
+
+            _temp.removeWhere({
+                'fbKey': fbKey
+            });
+        }
+
 
         function syncFb() {
 
@@ -293,9 +327,9 @@ var db, birthdays, fbA, tm, temp;
         function getTempById(key) {
 
             // $timeout(function() {
-                var obj = temp.by('fbKey', key);
-                console.log('obj', obj);
-                return obj;
+            var obj = temp.by('fbKey', key);
+            // console.log('obj', obj);
+            return obj;
             // }, 200);
 
         }
