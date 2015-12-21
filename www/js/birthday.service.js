@@ -36,7 +36,7 @@ var db, birthdays, fbA, tm, temp;
         }, 5000);
 */
 
-        console.log('asignado tm', tm);
+        // console.log('asignado tm', tm);
 
         function initDB() {
 
@@ -169,9 +169,9 @@ var db, birthdays, fbA, tm, temp;
 
                     console.log('inserted  to sync', fbKey);
 
-                   /* $timeout(function() {
-                        removeTempbyId(fbKey);
-                    }, 100);*/
+                    /* $timeout(function() {
+                         removeTempbyId(fbKey);
+                     }, 100);*/
 
                     $timeout(removeTempbyId, 100, true, fbKey);
                     // removeTempbyId(fbKey);
@@ -284,6 +284,8 @@ var db, birthdays, fbA, tm, temp;
         function validateInserted(lastIndex, birthday) {
             //TODO, POR QUE recien ccreado no me cogio el valor del array sera que necesita un timeuout??
             var key = _bd.$keyAt(lastIndex);
+
+            birthday.$id = key;
             // var birthday = _bd.$getRecord(key);
             var newObj = {
                 fbKey: key,
