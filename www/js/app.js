@@ -6,7 +6,13 @@
 angular.module('starter', ['ionic', 'lokijs', 'firebase'])
 
 .run(function($ionicPlatform) {
+
+  console.time('$ionicPlatform')
+  console.time('firebase')
+  console.time('loki')
+
   $ionicPlatform.ready(function() {
+    console.timeEnd('$ionicPlatform')
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if(window.cordova && window.cordova.plugins.Keyboard) {

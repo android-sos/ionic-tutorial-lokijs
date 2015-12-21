@@ -7,13 +7,14 @@ var db, birthdays, fbA, tm, temp;
         ]);
 
     function BirthdayService($q, Loki, $firebaseArray, $timeout, $interval, $ionicPlatform) {
- 
+
 
         var _db;
-        tm=$timeout;
+        tm = $timeout;
 
         var _birthdays;
         var _alreadyLoad = null;
+        var _fbAlreadyLoad = false;
         var _temp;
         var _ref = new Firebase("https://scm-loki.firebaseio.com/");
         var _bdRef = _ref.child('birthdays');
@@ -23,8 +24,9 @@ var db, birthdays, fbA, tm, temp;
 
         _bd.$loaded()
             .then(function(res) {
+                _fbAlreadyLoad = true;
                 console.log('array loaded', res);
-                
+                console.timeEnd('firebase')
             })
             .catch(function(err) {
                 console.log('cant loaded info from fb', err);
@@ -78,6 +80,7 @@ var db, birthdays, fbA, tm, temp;
                             })
                             .then(function() {
                                 _db.loadDatabase(options, function() {
+                                    console.timeEnd('loki');
                                     _alreadyLoad = true;
                                     loading = false;
                                     validateBirthDayCollection();
@@ -201,7 +204,13 @@ var db, birthdays, fbA, tm, temp;
 
             function dbOK() {
                 // service.emu = _birthdays.data;
-                return _birthdays.data;
+
+                if (_fbAlreadyLoad) {
+                    return _bd;
+                } else {
+                    return _birthdays.data;
+                }
+
             }
         }
 
