@@ -169,9 +169,11 @@ var db, birthdays, fbA, tm, temp;
 
                     console.log('inserted  to sync', fbKey);
 
-                    $timeout(function  () {
+                   /* $timeout(function() {
                         removeTempbyId(fbKey);
-                    }, 100);
+                    }, 100);*/
+
+                    $timeout(removeTempbyId, 100, true, fbKey);
                     // removeTempbyId(fbKey);
 
                 }
@@ -315,10 +317,6 @@ var db, birthdays, fbA, tm, temp;
         }
 
         function removeTempbyId(fbKey) {
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
             _temp.removeWhere({
                 'fbKey': fbKey
             });
