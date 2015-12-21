@@ -122,10 +122,10 @@ var db, birthdays, fbA, tm, temp;
             _birthdays = _db.getCollection('birthdays');
             if (!_birthdays) {
                 _birthdays = _db.addCollection('birthdays', {
-                    indices: ['fbKey'],
+                    indices: ['$id'],
                     clone: true
                 });
-                _birthdays.ensureUniqueIndex('fbKey');
+                _birthdays.ensureUniqueIndex('$id');
             }
 
             var isEnabled = true;
@@ -140,13 +140,13 @@ var db, birthdays, fbA, tm, temp;
 
             if (!_temp) {
                 _temp = _db.addCollection('temp', {
-                    indices: ['fbKey'],
+                    indices: ['$id'],
                     clone: true
                 });
-                _temp.ensureUniqueIndex('fbKey');
+                _temp.ensureUniqueIndex('$id');
 
                 //ejemplo de como obtener el registro
-                // temp.by('fbKey',"-K5fLRn_P7GM1VceDQTa")
+                // temp.by('$id',"-K5fLRn_P7GM1VceDQTa")
             }
 
             temp = _temp;
@@ -156,13 +156,24 @@ var db, birthdays, fbA, tm, temp;
         function trySync() {
             _temp.data.forEach(function(obj, i) {
                 console.log(obj, i);
-                _bdRef.child(obj.fbKey).set(obj.fbVal, syncCb(obj.fbKey));
+                var fbKey = obj.$id;
+                var objClone = angular.copy(obj);
+
+
+
+                if (delete objClone.$id && delete objClone.$loki) {
+                    console.log('format obj', fbKey, objClone)
+                    _bdRef.child(fbKey).set(objClone, syncCb(fbKey));
+
+                }
+
             });
         }
 
         function syncCb(fbKey) {
 
             function cbFb(error) {
+
                 if (error) {
                     console.error('error');
                 } else {
@@ -232,12 +243,12 @@ var db, birthdays, fbA, tm, temp;
 
                     if (!_temp) {
                         _temp = _db.addCollection('temp', {
-                            indices: ['fbKey']
+                            indices: ['$id']
                         });
-                        _temp.ensureUniqueIndex('fbKey');
+                        _temp.ensureUniqueIndex('$id');
 
                         //ejemplo de como obtener el registro
-                        // temp.by('fbKey',"-K5fLRn_P7GM1VceDQTa")
+                        // temp.by('$id',"-K5fLRn_P7GM1VceDQTa")
                     }
                     var isEnabled = true;
                     _birthdays.setChangesApi(isEnabled);
@@ -286,14 +297,17 @@ var db, birthdays, fbA, tm, temp;
             var key = _bd.$keyAt(lastIndex);
 
             birthday.$id = key;
-            // var birthday = _bd.$getRecord(key);
-            var newObj = {
-                fbKey: key,
-                fbVal: birthday
-            };
-            console.log(lastIndex, _bd[lastIndex], key, newObj);
-            _birthdays.insert(newObj);
-            _temp.insert(newObj);
+            /* // var birthday = _bd.$getRecord(key);
+             var newObj = {
+                 fbKey: key,
+                 fbVal: birthday
+             };
+             console.log(lastIndex, _bd[lastIndex], key, newObj);
+             _birthdays.insert(newObj);
+             _temp.insert(newObj);*/
+
+            _birthdays.insert(birthday);
+            _temp.insert(birthday);
         }
 
         function oK(ref) {
@@ -320,7 +334,7 @@ var db, birthdays, fbA, tm, temp;
 
         function removeTempbyId(fbKey) {
             _temp.removeWhere({
-                'fbKey': fbKey
+                '$id': fbKey
             });
         }
 
@@ -332,7 +346,7 @@ var db, birthdays, fbA, tm, temp;
         function getTempById(key) {
 
             // $timeout(function() {
-            var obj = temp.by('fbKey', key);
+            var obj = temp.by('$id', key);
             // console.log('obj', obj);
             return obj;
             // }, 200);

@@ -7,6 +7,7 @@
         vm.online = true;
         vm.fb = birthdayService.getBdArray();
         vm.isSync = isSync;
+        vm.emulateFb = emulateFb;
         // $ionicPlatform.ready(function() {
 
         //     // Initialize the database.
@@ -20,13 +21,19 @@
         // });
 
         function isSync(key) {
-           if( birthdayService.getTempById(key)){
-            return true;
-           }
-           else{
-            return false;
-           }
-            
+            if (birthdayService.getTempById(key)) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+        function emulateFb(lokiObj) {
+            if (lokiObj.fbVal) {
+                console.log('lokiObj', lokiObj);
+                lokiObj.fbVal.$id = lokiObj.fbKey;
+            }
         }
 
 
