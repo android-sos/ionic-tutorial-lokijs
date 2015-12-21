@@ -7,9 +7,11 @@ var db, birthdays, fbA, tm, temp;
         ]);
 
     function BirthdayService($q, Loki, $firebaseArray, $timeout, $interval, $ionicPlatform) {
-
+ 
 
         var _db;
+        tm=$timeout;
+
         var _birthdays;
         var _alreadyLoad = null;
         var _temp;
@@ -22,6 +24,7 @@ var db, birthdays, fbA, tm, temp;
         _bd.$loaded()
             .then(function(res) {
                 console.log('array loaded', res);
+                
             })
             .catch(function(err) {
                 console.log('cant loaded info from fb', err);
@@ -159,8 +162,6 @@ var db, birthdays, fbA, tm, temp;
                 var fbKey = obj.$id;
                 var objClone = angular.copy(obj);
 
-
-
                 if (delete objClone.$id && delete objClone.$loki) {
                     console.log('format obj', fbKey, objClone)
                     _bdRef.child(fbKey).set(objClone, syncCb(fbKey));
@@ -199,6 +200,7 @@ var db, birthdays, fbA, tm, temp;
                 .then(dbOK);
 
             function dbOK() {
+                // service.emu = _birthdays.data;
                 return _birthdays.data;
             }
         }
@@ -353,7 +355,8 @@ var db, birthdays, fbA, tm, temp;
 
         }
 
-        return {
+        var service = {
+            // emu: [],
             initDB: initDB,
             getAllBirthdays: getAllBirthdays,
             addBirthday: addBirthday,
@@ -365,5 +368,7 @@ var db, birthdays, fbA, tm, temp;
             getTempById: getTempById
 
         };
+
+        return service;
     }
 })();

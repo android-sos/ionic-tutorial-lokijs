@@ -19,3 +19,6 @@ birthdays.getChanges()
 a=birthdays.getChanges()
 [Object, Object]
 a.forEach(function(o,i){console.log(o)})
+
+filter
+ <!-- | date:"dd MMMM yyyy" -->

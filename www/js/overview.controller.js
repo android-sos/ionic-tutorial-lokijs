@@ -1,13 +1,18 @@
+var v, bs;
 (function() {
     angular.module('starter')
-        .controller('OverviewController', ['$scope', '$ionicModal', '$ionicPlatform', 'BirthdayService', OverviewController]);
+        .controller('OverviewController', ['$scope', '$ionicModal', '$ionicPlatform', 
+            'BirthdayService','$timeout', OverviewController]);
 
-    function OverviewController($scope, $ionicModal, $ionicPlatform, birthdayService) {
+    function OverviewController($scope, $ionicModal, $ionicPlatform, birthdayService,$timeout) {
         var vm = this;
+        v = vm;
+        bs = birthdayService;
         vm.online = true;
         vm.fb = birthdayService.getBdArray();
         vm.isSync = isSync;
         vm.emulateFb = emulateFb;
+        vm.emu = [];
         // $ionicPlatform.ready(function() {
 
         //     // Initialize the database.
@@ -19,6 +24,17 @@
         //             vm.birthdays = birthdays;
         //         });
         // });
+
+        vm.fb.$loaded()
+            .then(function(res) {
+                console.info('loaded from controlller');
+
+                $timeout(function(){
+                    console.info('timeout');
+                    vm.emu = res;
+                }, 2000);
+                
+            })
 
         function isSync(key) {
             if (birthdayService.getTempById(key)) {
@@ -40,7 +56,9 @@
         function activate() {
             birthdayService.getBirthdays()
                 .then(function(birthdays) {
+                    console.log('birthday received');
                     vm.birthdays = birthdays;
+                    vm.emu=birthdays;
                 });
 
             birthdayService.getTemp()
